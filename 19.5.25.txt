@@ -1,0 +1,128 @@
+SHOW DATABASES;
+USE vit;
+SHOW TABLES;
+DESC vit_ap;
+ALTER TABLE vit_ap DROP COLUMN s_country;
+
+CREATE TABLE vit_ap (
+    full_name VARCHAR(100),
+    reg_no VARCHAR(20),
+    school VARCHAR(100),
+    graduation_year INT
+);
+
+INSERT INTO vit_ap (full_name, reg_no, school, graduation_year) VALUES
+('Emma Johnson', '23BCE2001', 'School of Computer Science and Engineering', 2026),
+('Liam Smith', '23ECE2002', 'School of Electronics Engineering', 2026),
+('Olivia Brown', '23MEC2003', 'School of Mechanical Engineering', 2026),
+('Noah Davis', '23CIV2004', 'School of Civil Engineering', 2026),
+('Ava Wilson', '23EEE2005', 'School of Electrical Engineering', 2026),
+('Mason Moore', '23BCE2006', 'School of Computer Science and Engineering', 2026),
+('Sophia Taylor', '23ECE2007', 'School of Electronics Engineering', 2026),
+('James Anderson', '23MEC2008', 'School of Mechanical Engineering', 2026),
+('Isabella Thomas', '23CIV2009', 'School of Civil Engineering', 2026),
+('Benjamin Martinez', '23EEE2010', 'School of Electrical Engineering', 2026);
+
+CREATE TABLE vit_bhopal (
+    full_name VARCHAR(100),
+    reg_no VARCHAR(20),
+    school VARCHAR(100),
+    graduation_year INT
+);
+
+INSERT INTO vit_bhopal (full_name, reg_no, school, graduation_year) VALUES
+('Grace White', '23BCE2101', 'School of Computer Science and Engineering', 2026),
+('Elijah Harris', '23ECE2102', 'School of Electronics Engineering', 2026),
+('Chloe Martin', '23MEC2103', 'School of Mechanical Engineering', 2026),
+('Lucas Thompson', '23CIV2104', 'School of Civil Engineering', 2026),
+('Mia Garcia', '23EEE2105', 'School of Electrical Engineering', 2026),
+('Logan Clark', '23BCE2106', 'School of Computer Science and Engineering', 2026),
+('Lily Lewis', '23ECE2107', 'School of Electronics Engineering', 2026),
+('Jackson Lee', '23MEC2108', 'School of Mechanical Engineering', 2026),
+('Aria Walker', '23CIV2109', 'School of Civil Engineering', 2026),
+('Aiden Hall', '23EEE2110', 'School of Electrical Engineering', 2026);
+
+SELECT * FROM vit_ap;
+SELECT * FROM vit_bhopal;
+
+CREATE TABLE Worker1 (
+    WORKER_ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    FIRST_NAME CHAR(25),
+    LAST_NAME CHAR(25),
+    SALARY INT,
+    JOINING_DATE DATETIME,
+    DEPARTMENT CHAR(25)
+);
+
+INSERT INTO Worker1(WORKER_ID, FIRST_NAME, LAST_NAME, SALARY, JOINING_DATE, DEPARTMENT) VALUES
+(101, 'John', 'Doe', 120000, '15-03-21 10.00.00', 'HR'),
+(102, 'Emily', 'Stone', 95000, '15-07-12 10.00.00', 'Admin'),
+(103, 'Robert', 'King', 320000, '15-03-21 10.00.00', 'HR'),
+(104, 'Daniel', 'Green', 520000, '15-03-21 10.00.00', 'Admin'),
+(105, 'Thomas', 'Scott', 510000, '15-07-12 10.00.00', 'Admin'),
+(106, 'Henry', 'Baker', 180000, '15-07-12 10.00.00', 'Account'),
+(107, 'Charles', 'Young', 88000, '15-02-21 10.00.00', 'Account'),
+(108, 'Natalie', 'Evans', 102000, '15-05-12 10.00.00', 'Admin');
+
+SELECT * FROM Worker1;
+
+DELETE FROM Worker1 WHERE department='Account';
+
+DROP TABLE worker;
+
+DELETE FROM vit_bhopal WHERE full_name='Grace White';
+
+TRUNCATE TABLE Worker1;
+
+SELECT * FROM Worker1 WHERE salary > 95000;
+
+SELECT first_name FROM Worker1 WHERE department='HR' AND salary >= 11000;
+
+SELECT first_name, department FROM Worker1 WHERE salary > 250000 AND department = 'HR';
+
+SELECT * FROM Worker1 WHERE salary < 210000 AND department = 'HR' OR department = 'Admin';
+
+SELECT * FROM Worker1 WHERE salary > 120000 AND salary < 310000 AND (department='Admin' OR department='Account');
+
+SELECT * FROM Worker1 WHERE department NOT IN ('HR', 'Admin');
+
+SELECT * FROM Worker1
+WHERE MOD(worker_id, 2) = 0
+AND department IN ('Admin', 'HR')
+AND salary = (
+    SELECT MAX(salary)
+    FROM Worker1
+    WHERE MOD(worker_id, 2) = 0
+    AND department IN ('Admin', 'HR')
+);
+
+CREATE DATABASE vitvellore;
+USE vitvellore;
+
+CREATE TABLE cse(id INT, name VARCHAR(40));
+
+START TRANSACTION;
+INSERT INTO cse VALUES(201, 'Lucas');
+SAVEPOINT sp1;
+
+INSERT INTO cse VALUES(202, 'Ella');
+SAVEPOINT sp2;
+
+DELETE FROM cse WHERE id=201;
+SELECT * FROM cse;
+
+ROLLBACK TO sp2;
+
+DELETE FROM cse;
+
+INSERT INTO cse VALUES(203, 'Logan');
+SAVEPOINT sp3;
+
+INSERT INTO cse VALUES(204, 'Zoe');
+SAVEPOINT sp4;
+
+DELETE FROM cse WHERE id=203;
+SELECT * FROM cse;
+
+ROLLBACK TO sp4;
+COMMIT;
