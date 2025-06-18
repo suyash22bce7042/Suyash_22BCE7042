@@ -1,0 +1,111 @@
+use vit_ap;
+
+show tables;
+
+select * from worker1;
+desc worker1;
+
+create table worker (
+    worker_id int primary key,
+    first_name varchar(50),
+    last_name varchar(50),
+    salary int,
+    joining_date datetime,
+    department varchar(50)
+);
+
+insert into worker values
+(101, 'emma', 'johnson', 145000, '2015-03-10 09:00:00', 'hr'),
+(102, 'liam', 'williams', 88000, '2016-05-15 09:00:00', 'admin'),
+(103, 'olivia', 'brown', 119000, '2017-01-20 09:00:00', 'finance'),
+(104, 'noah', 'jones', 67000, '2015-09-30 09:00:00', 'it'),
+(105, 'ava', 'miller', 134000, '2018-07-22 09:00:00', 'hr'),
+(106, 'james', 'davis', 91000, '2019-11-12 09:00:00', 'finance'),
+(107, 'mia', 'garcia', 87000, '2020-04-05 09:00:00', 'admin'),
+(108, 'lucas', 'martinez', 102000, '2021-08-16 09:00:00', 'it');
+
+select * from worker1 where worker_id in (1,2);
+select * from worker1 where worker_id not in (1,2);
+select * from worker1 where salary between 100000 and 200000;
+select * from worker1 where salary not between 100000 and 200000;
+select * from worker1 where salary between 100000 and 300000 and (worker_id in (1,2,3,4));
+select min(salary) from worker1;
+select max(salary) from worker1;
+select sum(salary) from worker1;
+select avg(salary) from worker1;
+select * from worker1 where salary = (select min(salary) from worker1);
+
+select department, sum(salary) as total_salary
+from worker1
+group by department
+having sum(salary) > 100000;
+
+select distinct(department) from worker1;
+
+select department from worker
+union
+select department from worker1;
+
+select department from worker
+union all
+select department from worker1;
+
+select * from worker1 where worker_id in (1,2,3)
+union 
+select * from worker where worker_id in (101,102,103);
+
+select * from worker1 where salary <= 200000 order by salary;
+select * from worker1 where salary <= 200000 order by salary desc;
+
+select * from worker1 where first_name like '_i%l';
+select * from worker1 where first_name like '__i%';
+select * from worker1 where first_name like '%a_a';
+select * from worker1 where first_name like '_aa%';
+select * from worker1 where first_name like 'm%' or first_name like 'n%';
+
+create view admin_team as select * from worker1 where department = 'admin' and salary < 100000;
+create or replace view admin_team as select * from worker1 where department = 'admin' and salary > 200000;
+select * from admin_team;
+drop view admin_team;
+
+select first_name, salary,
+case
+    when salary > 300000 then 'rich people'
+    when salary <= 300000 and salary >= 100000 then 'middle class'
+    when salary <= 100000 and salary >= 0 then 'poor class'
+    else 'data not found'
+end as status_checksalary
+from worker;
+
+select * from worker;
+
+create table product (
+    productid int primary key,
+    productname varchar(100),
+    supplierid int,
+    categoryid int,
+    unit varchar(50),
+    price decimal(10, 2)
+);
+
+insert into product values
+(1, 'chais', 1, 1, '10 boxes x 20 bags', 18.00),
+(2, 'chang', 1, 1, '24 - 12 oz bottles', 19.00),
+(3, 'aniseed syrup', 1, 2, '12 - 550 ml bottles', 10.00),
+(4, 'chef anton''s cajun seasoning', 1, 2, '48 - 6 oz jars', 22.00),
+(5, 'chef anton''s gumbo mix', 1, 2, '36 boxes', 21.35);
+
+create table orders (
+    orderid int primary key,
+    customerid int,
+    employeeid int,
+    orderdate date,
+    shipperid int
+);
+
+insert into orders values
+(10248, 90, 5, '1996-07-04', 3),
+(10249, 81, 6, '1996-07-05', 1),
+(10250, 34, 4, '1996-07-08', 2),
+(10251, 84, 3, '1996-07-09', 1),
+(10252, 76, 4, '1996-07-10', 2);

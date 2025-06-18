@@ -1,0 +1,102 @@
+create database school;
+use school;
+
+create table students (
+    student_id int primary key,
+    name varchar(100)
+);
+
+create table library_issues (
+    issue_id int primary key,
+    student_id int,
+    book_title varchar(100),
+    foreign key (student_id) references students(student_id)
+);
+
+insert into students (student_id, name) values
+(201, 'james'),
+(202, 'emily'),
+(203, 'sophia');
+
+insert into library_issues (issue_id, student_id, book_title) values
+(11, 201, 'c programming'),
+(12, 202, 'data structures'),
+(13, 201, 'discrete math');
+
+insert into library_issues values
+(14, 205, 'ethics and values');
+
+create database store;
+use store;
+
+create table category (
+    c_id int primary key,
+    c_name varchar(40),
+    c_details varchar(25)
+);
+
+insert into category values
+(301, 'electronics', 'abcdefgh'),
+(302, 'furnitures', 'abcdefggsdfgdsbdsh');
+
+select * from category;
+
+drop table if exists products;
+
+create table products (
+    p_id int primary key,
+    p_name varchar(25),
+    p_details varchar(35),
+    c_id int,
+    foreign key (c_id) references category(c_id)
+);
+
+delete from category where c_id = 301;
+
+drop table category;
+
+insert into products values
+(41, 'tv', 'smart led 42 inch', 301),
+(42, 'tv', 'smart led 42 inch', 301),
+(43, 'sofa', 'leather 3-seater recliner', 302);
+
+select * from products;
+
+delete from category where c_id = 301;
+
+update products set c_id = 303 where c_id = 301;
+update category set c_id = 304 where c_id = 301;
+
+create table cust_details (
+    first_name varchar(40) not null,
+    middle_name varchar(40) not null,
+    last_name varchar(40) not null,
+    c_id int unique,
+    c_country varchar(35) default 'usa'
+);
+
+insert into cust_details (first_name, middle_name, last_name, c_id)
+values ('liam', 'a.', 'johnson', 301);
+
+select * from cust_details;
+
+alter table cust_details add primary key (c_id);
+
+show create table cust_details;
+
+alter table cust_details drop primary key;
+alter table cust_details drop index c_id;
+
+show index from cust_details;
+
+create table orders (
+    order_id int primary key,
+    order_date date,
+    c_id int,
+    foreign key (c_id)
+        references cust_details(c_id)
+        on delete cascade
+        on update cascade
+);
+
+drop table orders;
