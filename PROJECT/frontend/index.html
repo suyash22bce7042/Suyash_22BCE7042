@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Feedback Hub 🌟</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body {
+      font-family: 'Rubik', sans-serif;
+      background: #FFFAF0;
+      min-height: 100vh;
+    }
+    nav {
+      background: #FFD700;
+      padding: 1rem 2rem;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    nav h1 { color: #8B4513; }
+    nav a {
+      color: #8B4513; text-decoration: none;
+      font-weight: 500; margin-left: 1rem;
+    }
+    nav a:hover { text-decoration: underline; }
+    .container {
+      max-width: 700px; margin: 2rem auto;
+      background: #fff; padding: 2rem; border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      border: 3px dashed #FFE4B5;
+    }
+    input, textarea {
+      width: 100%; padding: 0.8rem; margin-top: 1rem;
+      border: 2px solid #FFE4B5; border-radius: 8px;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 1rem; padding: 0.8rem 1rem;
+      background: #FFB6C1; border: 2px dashed #FF69B4;
+      border-radius: 8px; font-size: 1rem; cursor: pointer;
+      transition: transform .2s, background .2s;
+    }
+    button:hover {
+      background: #FF69B4; transform: scale(1.03);
+    }
+    .feedback-list {
+      margin-top: 2rem;
+    }
+    .feedback-item {
+      background: #E6E6FA; padding: 1rem; border-radius: 8px;
+      margin-bottom: 1rem; position: relative;
+      border: 2px solid #D8BFD8;
+    }
+    .feedback-item button {
+      position: absolute; top:10px; right:10px;
+      background: #FFC0CB; border:none; padding:0.3rem 0.6rem;
+      border-radius:4px; cursor: pointer; font-size:0.8rem;
+      transition: background .2s;
+    }
+    .feedback-item button:hover { background: #FF69B4; color:white; }
+  </style>
+</head>
+<body>
+  <nav>
+    <h1>Feedback Hub</h1>
+    <div>
+      <a href="index.html">Home</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2>Hello, <span id="userName"></span>!</h2>
+    <p>Share your thoughts below ⬇️</p>
+    <input id="name" disabled />
+    <textarea id="message" placeholder="Type your feedback..." rows="3"></textarea>
+    <input id="rating" type="number" min="1" max="5" placeholder="Rating 1–5"/>
+    <button onclick="submitFeedback()">Submit Feedback</button>
+
+    <div class="feedback-list" id="feedbackList"></div>
+  </div>
+
+  <script>
+    const user = localStorage.getItem('username');
+    if(!user){ alert('Log in first'); location='signin.html'; }
+    document.getElementById('userName').textContent = user;
+    document.getElementById('name').value = user;
+
+    async function load() {
+      const res = await fetch('http://localhost:5000/feedbacks');
+      const arr = await res.json();
+      const container = document.getElementById('feedbackList');
+      container.innerHTML = '';
+      arr.forEach(fb=>{
+        const div = document.createElement('div');
+        div.className='feedback-item';
+        div.innerHTML=`
+          <strong>${fb.name}</strong> (${fb.rating}/5)
+          <p>${fb.message}</p>
+          ${user==='admin'?`<button onclick="del('${fb._id}')">Delete</button>`:''}
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    async function submitFeedback(){
+      const msg = document.getElementById('message').value.trim();
+      const rt = parseInt(document.getElementById('rating').value);
+      if(!msg||!rt){ return alert('All fields!'); }
+      await fetch('http://localhost:5000/feedback',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({name:user,message:msg,rating:rt})
+      });
+      document.getElementById('message').value='';
+      document.getElementById('rating').value='';
+      load();
+    }
+
+    async function del(id){
+      await fetch(`http://localhost:5000/feedback/${id}`,{method:'DELETE'});
+      load();
+    }
+
+    function logout(){
+      localStorage.removeItem('username');
+      location='signin.html';
+    }
+
+    load();
+  </script>
+</body>
+</html>
